@@ -32,7 +32,7 @@ button:disabled{background:#aaa;cursor:not-allowed}.full{width:100%}
 .modal-box{background:#fff;width:100%;max-width:500px;padding:22px;border-radius:25px 25px 0 0}
 input,select{width:100%;padding:14px;border:1px solid #ddd;border-radius:12px;margin:8px 0 13px;font-size:16px}
 .close{background:#eee;color:#333;margin-top:8px}
-#toast{position:fixed;left:50%;bottom:85px;transform:translateX(-50%);background:#222;color:#fff;padding:12px 18px;border-radius:10px;display:none;z-index:50;font-size:14px}
+#toast{position:fixed;left:5htmm:85px;transform:translateX(-50%);background:#222;color:#fff;padding:12px 18px;border-radius:10px;display:none;z-index:50;font-size:14px}
 </style>
 </head>
 
@@ -194,17 +194,4 @@ localStorage.setItem("withdrawAmount",amount);
 localStorage.setItem("withdrawAccount",account);
 closeWithdraw();update();toast("Withdraw Request পাঠানো হয়েছে।");
 }
-function showWithdrawPending(){
-const status=localStorage.getItem("withdrawStatus"),box=document.getElementById("withdrawPending"),text=document.getElementById("pendingText");
-if(status==="pending"){
-const method=localStorage.getItem("withdrawMethod"),amount=localStorage.getItem("withdrawAmount"),account=localStorage.getItem("withdrawAccount");
-box.style.display="block";text.textContent=method+" • ৳"+Number(amount).toFixed(2)+" • "+account+" — আপনার Withdraw Request বর্তমানে Pending।";
-}else box.style.display="none";
-}
-function toast(message){
-const t=document.getElementById("toast");t.textContent=message;t.style.display="block";setTimeout(()=>t.style.display="none",2500);
-}
-dailyReset();update();
-</script>
-</body>
-</html>
+function showWithdrawPending()ht

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EarnPro</title>
+
+<!-- Monetag SDK -->
+<script src="//libtl.com/sdk.js" data-zone="11892992" data-sdk="show_11892992"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#f4f6fb;color:#222;max-width:500px;margin:auto}
+header{background:linear-gradient(135deg,#1769ff,#6c4cff);color:#fff;padding:22px 18px;border-radius:0 0 25px 25px}
+.logo{font-size:25px;font-weight:bold}.welcome{margin-top:8px;opacity:.9}
+.balance{margin-top:18px;background:#ffffff26;padding:15px;border-radius:15px}.balance b{font-size:25px}
+main{padding:16px;padding-bottom:90px}.section{display:none}.section.active{display:block}
+.card{background:#fff;padding:18px;border-radius:18px;margin-bottom:14px;box-shadow:0 4px 15px #0000000f}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stat{background:#fff;padding:17px;border-radius:16px;text-align:center;box-shadow:0 4px 15px #0000000d}
+.stat b{display:block;font-size:23px;color:#1769ff;margin-bottom:5px}
+button{border:0;border-radius:12px;padding:13px 18px;background:#1769ff;color:#fff;font-size:16px;cursor:pointer}
+button:disabled{background:#aaa;cursor:not-allowed}.full{width:100%}
+.adbox{height:180px;border:2px dashed #c8c8c8;border-radius:16px;display:flex;align-items:center;justify-content:center;text-align:center;margin:15px 0;color:#777}
+.progress{height:10px;background:#e5e5e5;border-radius:10px;overflow:hidden;margin:12px 0}.progress div{height:100%;width:0;background:#1769ff}
+.refcode{background:#eef4ff;padding:14px;border-radius:12px;font-weight:bold;letter-spacing:2px;margin:12px 0;text-align:center}
+.row{display:flex;align-items:center;justify-content:space-between;padding:15px 0;border-bottom:1px solid #eee}.row:last-child{border:0}
+.muted{color:#777;font-size:14px}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:500px;background:#fff;display:grid;grid-template-columns:repeat(4,1fr);padding:9px 5px;box-shadow:0 -4px 15px #0000001a}
+.navbtn{background:none;color:#777;padding:8px 2px;font-size:12px}.navbtn.active{color:#1769ff;font-weight:bold}
+.modal{position:fixed;inset:0;background:#0000008c;display:none;align-items:flex-end;justify-content:center;z-index:20}
+.modal-box{background:#fff;width:100%;max-width:500px;padding:22px;border-radius:25px 25px 0 0}
+input,select{width:100%;padding:14px;border:1px solid #ddd;border-radius:12px;margin:8px 0 13px;font-size:16px}
+.close{background:#eee;color:#333;margin-top:8px}
+#toast{position:fixed;left:50%;bottom:85px;transform:translateX(-50%);background:#222;color:#fff;padding:12px 18px;border-radius:10px;display:none;z-index:50;font-size:14px}
+</style>
+</head>
+
+<body>
+<header>
+<div class="logo">EarnPro</div>
+<div class="welcome">স্বাগতম 👋</div>
+<div class="balance">বর্তমান ব্যালেন্স<br><b>৳ <span id="balance">0.00</span></b></div>
+</header>
+
+<main>
+<section id="home" class="section active">
+<div class="card"><h2>আজকের লক্ষ্য 🎯</h2><p class="muted">প্রতিদিন সর্বোচ্চ ২০০টি বিজ্ঞাপন</p>
+<div class="progress"><div id="progress"></div></div><p><b id="homeDone">0</b> / 200 সম্পন্ন</p></div>
+<div class="stats">
+<div class="stat"><b id="done">0</b>সম্পন্ন</div>
+<div class="stat"><b id="left">200</b>বাকি</div>
+<div class="stat"><b id="earned">৳0.00</b>আয়</div>
+<div class="stat"><b id="refCount">0</b>রেফার</div>
+</div><br>
+<button class="full" onclick="showSection('earn')">💰 Earn শুরু করুন</button>
+</section>
+
+<section id="earn" class="section">
+<div class="card">
+<h2>Earn 💰</h2>
+<p class="muted">বাটনে চাপলে আপনার Monetag ad zone চালু করার চেষ্টা করবে।</p>
+<div class="stats"><div class="stat"><b id="earnDone">0</b>সম্পন্ন</div><div class="stat"><b id="earnLeft">200</b>বাকি</div></div>
+<div class="adbox"><div><h3>Monetag Advertisement</h3><p class="muted">Ad দেখাতে নিচের বাটনে চাপুন</p></div></div>
+<button id="watchBtn" class="full" onclick="watchAd()">▶ Ad দেখুন</button>
+<p class="muted" style="margin-top:12px">Ad availability ও valid impression Monetag-এর system অনুযায়ী নির্ধারিত হয়।</p>
+</div>
+</section>
+
+<section id="refer" class="section">
+<div class="card"><h2>Referral 🎁</h2><p class="muted">আপনার Referral Code বন্ধুদের সাথে শেয়ার করুন।</p>
+<div class="refcode" id="refCode">EARN2026</div>
+<button class="full" onclick="copyCode()">📋 Referral Code Copy</button></div>
+<div class="card"><h3>Referral সম্পর্কে</h3><br><p class="muted">আপনার Referral Code ব্যবহার করে কেউ যুক্ত হলে Referral হিসাব এখানে দেখানো হবে।</p></div>
+</section>
+
+<section id="profile" class="section">
+<div class="card"><h2>👤 Profile</h2><br><p><b>Guest User</b></p><p class="muted">Demo Account</p></div>
+<div class="card">
+<div class="row"><div><b>💰 Withdraw</b><div class="muted">bKash / Nagad</div></div><button onclick="openWithdraw()">Withdraw</button></div>
+<div class="row"><div><b>⚙️ Settings</b><div class="muted">Account settings</div></div></div>
+</div>
+<div id="withdrawPending" class="card" style="display:none;background:#fff8e1;color:#7a5200">⏳ <b>Withdraw Pending</b><p class="muted" id="pendingText"></p></div>
+<div class="card"><h3>Website Info</h3><br><p class="muted">EarnPro Demo Version</p></div>
+</section>
+</main>
+
+<div class="bottom-nav">
+<button class="navbtn active" onclick="showSection('home',this)">🏠<br>Home</button>
+<button class="navbtn" onclick="showSection('earn',this)">💰<br>Earn</button>
+<button class="navbtn" onclick="showSection('refer',this)">🎁<br>Referral</button>
+<button class="navbtn" onclick="showSection('profile',this)">👤<br>Profile</button>
+</div>
+
+<div class="modal" id="withdrawModal"><div class="modal-box">
+<h2>Withdraw Request</h2><p class="muted">পেমেন্ট পদ্ধতি নির্বাচন করুন।</p><br>
+<label>Payment Method</label>
+<select id="method"><option value="">Select Method</option><option value="bKash">bKash</option><option value="Nagad">Nagad</option></select>
+<label>Account Number</label><input id="account" type="tel" placeholder="01XXXXXXXXX">
+<label>Amount</label><input id="amount" type="number" min="1" placeholder="Withdraw Amount">
+<button class="full" onclick="requestWithdraw()">Submit Request</button>
+<button class="full close" onclick="closeWithdraw()">Cancel</button>
+</div></div>
+
+<div id="toast"></div>
+
+<script>
+let done=Number(localStorage.getItem("done"))||0;
+let balance=Number(localStorage.getItem("bal"))||0;
+const DAILY_LIMIT=200;
+
+function getLocalDate(){
+const d=new Date();
+return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function dailyReset(){
+const today=getLocalDate();
+if(localStorage.getItem("adDate")!==today){
+done=0;localStorage.setItem("done","0");localStorage.setItem("adDate",today);
+}}
+function update(){
+if(done>DAILY_LIMIT)done=DAILY_LIMIT;
+const left=Math.max(0,DAILY_LIMIT-done);
+document.getElementById("balance").textContent=balance.toFixed(2);
+document.getElementById("done").textContent=done;
+document.getElementById("left").textContent=left;
+document.getElementById("homeDone").textContent=done;
+document.getElementById("earnDone").textContent=done;
+document.getElementById("earnLeft").textContent=left;
+document.getElementById("earned").textContent="৳"+balance.toFixed(2);
+document.getElementById("progress").style.width=(done/DAILY_LIMIT*100)+"%";
+const btn=document.getElementById("watchBtn");
+btn.disabled=done>=DAILY_LIMIT;
+btn.textContent=done>=DAILY_LIMIT?"আজকের ২০০টি Ad সম্পন্ন":"▶ Ad দেখুন";
+localStorage.setItem("done",done);localStorage.setItem("bal",balance);showWithdrawPending();
+}
+function showSection(id,btn){
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+document.querySelectorAll(".navbtn").forEach(b=>b.classList.remove("active"));
+if(btn)btn.classList.add("active");
+else{const a={home:0,earn:1,refer:2,profile:3}[id];if(a!==undefined)document.querySelectorAll(".navbtn")[a].classList.add("active");}
+}
+
+async function watchAd(){
+if(done>=DAILY_LIMIT){toast("আজকের লিমিট শেষ।");return;}
+const btn=document.getElementById("watchBtn");
+btn.disabled=true;btn.textContent="Rewarded Ad চালু হচ্ছে...";
+try{
+if(typeof window.show_11892992!=="function")throw new Error("Monetag SDK not loaded");
+
+// Monetag Rewarded Popup: reward only after the ad promise resolves.
+await window.show_11892992('pop');
+
+done++;
+balance += REWARD;
+localStorage.setItem("done",done);
+localStorage.setItem("bal",balance);
+update();
+toast("Ad সম্পন্ন! ৳"+REWARD.toFixed(2)+" যোগ হয়েছে।");
+}catch(e){
+console.error(e);
+toast("Ad সম্পূর্ণ হয়নি। Reward যোগ করা হয়নি।");
+}finally{
+update();
+}
+}
+
+function copyCode(){
+const code=document.getElementById("refCode").textContent.trim();
+if(navigator.clipboard)navigator.clipboard.writeText(code).then(()=>toast("Referral Code কপি হয়েছে!")).catch(()=>fallbackCopy(code));
+else fallbackCopy(code);
+}
+function fallbackCopy(text){
+const x=document.createElement("textarea");x.value=text;document.body.appendChild(x);x.select();
+try{document.execCommand("copy");toast("Referral Code কপি হয়েছে!");}catch(e){toast("Copy করা যায়নি। Code: "+text);}
+document.body.removeChild(x);
+}
+function openWithdraw(){document.getElementById("withdrawModal").style.display="flex";}
+function closeWithdraw(){document.getElementById("withdrawModal").style.display="none";}
+function requestWithdraw(){
+const method=document.getElementById("method").value;
+const account=document.getElementById("account").value.trim();
+const amount=Number(document.getElementById("amount").value);
+if(!method)return toast("bKash অথবা Nagad নির্বাচন করুন।");
+if(!account)return toast("Account Number দিন।");
+if(!amount||amount<=0)return toast("সঠিক Amount দিন।");
+if(amount>balance)return toast("আপনার পর্যাপ্ত ব্যালেন্স নেই।");
+balance-=amount;
+localStorage.setItem("bal",balance);
+localStorage.setItem("withdrawStatus","pending");
+localStorage.setItem("withdrawMethod",method);
+localStorage.setItem("withdrawAmount",amount);
+localStorage.setItem("withdrawAccount",account);
+closeWithdraw();update();toast("Withdraw Request পাঠানো হয়েছে।");
+}
+function showWithdrawPending(){
+const status=localStorage.getItem("withdrawStatus"),box=document.getElementById("withdrawPending"),text=document.getElementById("pendingText");
+if(status==="pending"){
+const method=localStorage.getItem("withdrawMethod"),amount=localStorage.getItem("withdrawAmount"),account=localStorage.getItem("withdrawAccount");
+box.style.display="block";text.textContent=method+" • ৳"+Number(amount).toFixed(2)+" • "+account+" — আপনার Withdraw Request বর্তমানে Pending।";
+}else box.style.display="none";
+}
+function toast(message){
+const t=document.getElementById("toast");t.textContent=message;t.style.display="block";setTimeout(()=>t.style.display="none",2500);
+}
+dailyReset();update();
+</script>
+</body>
+</html>
